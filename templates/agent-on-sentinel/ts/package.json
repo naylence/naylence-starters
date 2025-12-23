@@ -15,7 +15,7 @@
     "smoke": "node -r dotenv/config dist/client.mjs dotenv_config_path=.env.client | grep -q 'Hello, World!' && echo '✓ Smoke test passed' || (echo '✗ Smoke test failed' && exit 1)"
   },
   "dependencies": {
-    "@naylence/agent-sdk": "0.3.16"
+    "@naylence/agent-sdk": "^0.3.17"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
