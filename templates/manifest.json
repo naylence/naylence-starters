@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "agent-on-sentinel",
+      "name": "Agent on Sentinel",
+      "description": "Starter agent with Sentinel runtime and client scaffolding.",
+      "flavors": ["ts"],
+      "order": 1
+    }
+  ]
+}
