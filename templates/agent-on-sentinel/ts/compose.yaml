@@ -8,8 +8,8 @@
 #   docker compose down            # Stop everything
 
 x-config: &config
-  version: &base-version "0.3.16"
-  base-image: &base-image naylence/agent-sdk-node:0.3.16
+  version: &base-version "0.3.17"
+  base-image: &base-image naylence/agent-sdk-node:0.3.17
 
 services:
   # Sentinel + EchoAgent (long-running service)
