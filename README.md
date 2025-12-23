@@ -21,12 +21,30 @@ Manifest schema (brief):
       "id": "agent-on-sentinel",
       "name": "Agent on Sentinel",
       "description": "Starter agent with Sentinel runtime and client scaffolding.",
-      "flavors": ["ts"],
+      "flavors": [
+        {
+          "id": "ts",
+          "path": "ts",
+          "nextSteps": ["npm install", "npm run build", "npm run dev"]
+        },
+        {
+          "id": "py",
+          "path": "py",
+          "nextSteps": [
+            "python -m venv .venv",
+            "source .venv/bin/activate",
+            "pip install -r requirements.txt",
+            "python echo_agent.py"
+          ]
+        }
+      ],
       "order": 1
     }
   ]
 }
 ```
+
+Note: `flavors` is an array of objects. Each flavor can carry its own `nextSteps`.
 
 ## Adding a new template
 

@@ -5,7 +5,23 @@
       "id": "agent-on-sentinel",
       "name": "Agent on Sentinel",
       "description": "Starter agent with Sentinel runtime and client scaffolding.",
-      "flavors": ["ts"],
+      "flavors": [
+        {
+          "id": "ts",
+          "path": "ts",
+          "nextSteps": ["npm install", "npm run build", "npm run dev"]
+        },
+        {
+          "id": "py",
+          "path": "py",
+          "nextSteps": [
+            "python3 -m venv .venv",
+            "source .venv/bin/activate",
+            "pip install -r requirements.txt",
+            "python echo_agent.py"
+          ]
+        }
+      ],
       "order": 1
     }
   ]

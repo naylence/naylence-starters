@@ -1,0 +1,63 @@
+# Docker Compose for agent-on-sentinel (Python) starter
+#
+# Starts a sentinel hosting the EchoAgent, plus a one-shot client service.
+#
+# Usage:
+#   docker compose up -d agent     # Start sentinel+agent
+#   docker compose run --rm client # Run client once
+#   docker compose down            # Stop everything
+
+x-config: &config
+  version: &base-version "0.3.27"
+  base-image: &base-image naylence/agent-sdk-python:0.3.27
+
+services:
+  # Sentinel + EchoAgent (long-running service)
+  agent:
+    image: *base-image
+    command: ["python", "echo_agent.py"]
+    working_dir: /app
+    ports:
+      - "${FAME_LISTENER_PORT:-8000}:8000"
+    env_file:
+      - .env.agent
+    environment:
+      FAME_LOG_LEVEL: ${FAME_LOG_LEVEL:-info}
+      FAME_SHOW_ENVELOPES: ${FAME_SHOW_ENVELOPES:-false}
+      FAME_LISTENER_PORT: ${FAME_LISTENER_PORT:-8000}
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    networks:
+      - naylence-net
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket, os; port=int(os.getenv('FAME_LISTENER_PORT', '8000')); s=socket.create_connection(('localhost', port)); s.close()\""]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+      start_period: 2s
+
+  # CLI Client (one-shot)
+  client:
+    image: *base-image
+    command: ["python", "client.py"]
+    working_dir: /app
+    env_file:
+      - .env.client
+    environment:
+      FAME_LOG_LEVEL: ${FAME_LOG_LEVEL:-info}
+      FAME_SHOW_ENVELOPES: ${FAME_SHOW_ENVELOPES:-false}
+      FAME_LISTENER_PORT: ${FAME_LISTENER_PORT:-8000}
+      # Override for Docker networking (container-to-container)
+      FAME_DIRECT_ADMISSION_URL: ws://agent:${FAME_LISTENER_PORT:-8000}/fame/v1/attach/ws/downstream
+    volumes:
+      - ./:/app
+    depends_on:
+      agent:
+        condition: service_healthy
+    networks:
+      - naylence-net
+
+networks:
+  naylence-net:
+    driver: bridge
